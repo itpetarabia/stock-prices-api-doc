@@ -1,30 +1,18 @@
 {
-  "openapi": "3.0.8",
+  "openapi": "3.1.0",
   "info": {
     "title": "Pet Arabia Stock & Prices API",
     "description": "This is a Pet Arabia's Server based on the OpenAPI 3.0 specification. You can search for the products available to you and request for their qun",
     "contact": {
       "email": "it@petarabia.com"
     },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    },
     "version": "1.0"
   },
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
   "servers": [
     {
-      "url": "https://petarabia.odoo.com/stock-update/api/v1"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Branch",
-      "description": "Everything about our branches"
-    },
-    {
-      "name": "Product",
-      "description": "Everything about our products and their stock count"
+      "url": "https://petarabia.odoo.com/stock-update/api/v1",
+      "variables": {}
     }
   ],
   "paths": {
@@ -33,27 +21,34 @@
         "tags": [
           "Branch"
         ],
-        "summary": "Get Branches available to you",
+        "summary": "getBranches",
         "description": "Return a list of Branches",
         "operationId": "getBranches",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful Operation",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Branch"
-                  }
+                  },
+                  "description": "",
+                  "contentMediaType": "application/json"
                 }
               }
             }
           },
           "404": {
-            "description": "No branches found!"
+            "description": "No branches found!",
+            "headers": {},
+            "content": {}
           }
         },
+        "deprecated": false,
         "security": [
           {
             "api_key": [
@@ -61,34 +56,42 @@
             ]
           }
         ]
-      }
+      },
+      "parameters": []
     },
     "/product": {
       "get": {
         "tags": [
           "Product"
         ],
-        "summary": "Explore all Products",
+        "summary": "getAllProducts",
         "description": "Returns a list of Products",
         "operationId": "getAllProducts",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "successful operation",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Product"
-                  }
+                  },
+                  "description": "",
+                  "contentMediaType": "application/json"
                 }
               }
             }
           },
           "404": {
-            "description": "Not found!"
+            "description": "Not found!",
+            "headers": {},
+            "content": {}
           }
         },
+        "deprecated": false,
         "security": [
           {
             "api_key": [
@@ -96,14 +99,15 @@
             ]
           }
         ]
-      }
+      },
+      "parameters": []
     },
     "/product/{barcode}": {
       "get": {
         "tags": [
           "Product"
         ],
-        "summary": "Explore Product by Barcode",
+        "summary": "getProductByBarcode",
         "description": "Returns a Single Product with all its details",
         "operationId": "getProductByBarcode",
         "parameters": [
@@ -112,6 +116,7 @@
             "in": "path",
             "description": "Barcode / SKU of product to return",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -120,6 +125,7 @@
         "responses": {
           "200": {
             "description": "Successful Operation",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -129,9 +135,12 @@
             }
           },
           "404": {
-            "description": "Product Not Found"
+            "description": "Product Not Found",
+            "headers": {},
+            "content": {}
           }
         },
+        "deprecated": false,
         "security": [
           {
             "api_key": [
@@ -139,87 +148,95 @@
             ]
           }
         ]
-      }
+      },
+      "parameters": []
     }
   },
   "components": {
     "schemas": {
       "Product": {
+        "title": "Product",
         "type": "object",
         "properties": {
           "barcode": {
             "type": "string",
-            "example": "99009910"
+            "examples": [
+              "99009910"
+            ]
           },
           "name": {
             "type": "string",
-            "example": "Taste of the Wild"
+            "examples": [
+              "Taste of the Wild"
+            ]
           },
           "price": {
             "type": "number",
-            "example": 32.5
+            "examples": [
+              32.5
+            ]
           },
           "quantities": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BranchQty"
-            }
+            },
+            "description": ""
           }
         }
       },
       "BranchQty": {
+        "title": "BranchQty",
         "type": "object",
         "properties": {
           "branch_id": {
             "type": "integer",
-            "format": "int32",
-            "example": 19
+            "contentEncoding": "int32",
+            "examples": [
+              19
+            ]
           },
           "quantity": {
             "type": "integer",
-            "format": "int64",
-            "example": 42
+            "contentEncoding": "int64",
+            "examples": [
+              42
+            ]
           }
         }
       },
       "Branch": {
+        "title": "Branch",
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int32",
-            "example": 19
+            "contentEncoding": "int32",
+            "examples": [
+              19
+            ]
           },
           "name": {
             "type": "string",
-            "example": "Sanad"
+            "examples": [
+              "Sanad"
+            ]
           }
         }
       },
       "ApiResponse": {
+        "title": "ApiResponse",
         "type": "object",
         "properties": {
           "code": {
             "type": "integer",
-            "format": "int32"
+            "contentEncoding": "int32"
           },
           "type": {
             "type": "string"
           },
           "message": {
             "type": "string"
-          }
-        }
-      }
-    },
-    "requestBodies": {
-      "Product": {
-        "description": "Pet object that needs to be added to the store",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Product"
-            }
           }
         }
       }
@@ -231,5 +248,16 @@
         "in": "header"
       }
     }
-  }
+  },
+  "security": [],
+  "tags": [
+    {
+      "name": "Branch",
+      "description": "Everything about our branches"
+    },
+    {
+      "name": "Product",
+      "description": "Everything about our products and their stock count"
+    }
+  ]
 }
