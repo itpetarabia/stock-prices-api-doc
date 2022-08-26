@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  title: Pet Arabia Stock & Prices API
+  description: This is a Pet Arabia's Server based on the OpenAPI 3.0 specification. You can search for the products available to you and request for their qun
+  contact:
+    email: it@petarabia.com
+  version: '1.0'
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+servers:
+- url: https://petarabia.odoo.com/stock-update/api/v1
+  variables: {}
+paths:
+  /branch:
+    get:
+      tags:
+      - Branch
+      summary: getBranches
+      description: Return a list of Branches
+      operationId: getBranches
+      parameters: []
+      responses:
+        '200':
+          description: Successful Operation
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Branch'
+                description: ''
+                contentMediaType: application/json
+        '404':
+          description: No branches found!
+          headers: {}
+          content: {}
+      deprecated: false
+      security:
+      - api_key:
+        - kkkk
+    parameters: []
+  /product:
+    get:
+      tags:
+      - Product
+      summary: getAllProducts
+      description: Returns a list of Products
+      operationId: getAllProducts
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+                description: ''
+                contentMediaType: application/json
+        '404':
+          description: Not found!
+          headers: {}
+          content: {}
+      deprecated: false
+      security:
+      - api_key:
+        - kkkk
+    parameters: []
+  /product/{barcode}:
+    get:
+      tags:
+      - Product
+      summary: getProductByBarcode
+      description: Returns a Single Product with all its details
+      operationId: getProductByBarcode
+      parameters:
+      - name: barcode
+        in: path
+        description: Barcode / SKU of product to return
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful Operation
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product Not Found
+          headers: {}
+          content: {}
+      deprecated: false
+      security:
+      - api_key:
+        - kkkk
+    parameters: []
+components:
+  schemas:
+    Product:
+      title: Product
+      type: object
+      properties:
+        barcode:
+          type: string
+          examples:
+          - '99009910'
+        name:
+          type: string
+          examples:
+          - Taste of the Wild
+        price:
+          type: number
+          examples:
+          - 32.5
+        quantities:
+          type: array
+          items:
+            $ref: '#/components/schemas/BranchQty'
+          description: ''
+    BranchQty:
+      title: BranchQty
+      type: object
+      properties:
+        branch_id:
+          type: integer
+          contentEncoding: int32
+          examples:
+          - 19
+        quantity:
+          type: integer
+          contentEncoding: int64
+          examples:
+          - 42
+    Branch:
+      title: Branch
+      type: object
+      properties:
+        id:
+          type: integer
+          contentEncoding: int32
+          examples:
+          - 19
+        name:
+          type: string
+          examples:
+          - Sanad
+    ApiResponse:
+      title: ApiResponse
+      type: object
+      properties:
+        code:
+          type: integer
+          contentEncoding: int32
+        type:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+security: []
+tags:
+- name: Branch
+  description: Everything about our branches
+- name: Product
+  description: Everything about our products and their stock count
