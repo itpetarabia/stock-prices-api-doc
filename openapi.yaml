@@ -3,6 +3,7 @@ info:
   title: Pet Arabia Stock & Prices API
   description: This is a Pet Arabia's Server based on the OpenAPI 3.0 specification. You can search for the products available to you and request for their qun
   contact:
+    name: Isa AlDoseri
     email: it@petarabia.com
   version: '1.0'
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
