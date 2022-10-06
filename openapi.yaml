@@ -8,7 +8,7 @@ info:
   version: '1.0'
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 servers:
-- url: https://petarabia.odoo.com/stock-update/api/v1
+- url: http://127.0.0.1:5000
   variables: {}
 
 webhooks:
@@ -38,8 +38,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: Successful Operation
-          headers: {}
+          description: OK
           content:
             application/json:
               schema:
@@ -48,10 +47,8 @@ paths:
                   $ref: '#/components/schemas/Branch'
                 description: ''
                 contentMediaType: application/json
-        '404':
-          description: No branches found!
-          headers: {}
-          content: {}
+        '401':
+          $ref: '#/responses/Unauthorized'
       deprecated: false
       security:
       - api_key: []
@@ -76,10 +73,8 @@ paths:
                   $ref: '#/components/schemas/Product'
                 description: ''
                 contentMediaType: application/json
-        '404':
-          description: Not found!
-          headers: {}
-          content: {}
+        '401':
+          $ref: '#/responses/Unauthorized'
       deprecated: false
       security:
       - api_key: []
@@ -107,10 +102,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/responses/Unauthorized'
         '404':
-          description: Product Not Found
-          headers: {}
-          content: {}
+          $ref: '#/responses/NotFound'
+
       deprecated: false
       security:
       - api_key: []
@@ -183,6 +179,17 @@ components:
           contentEncoding: int32
           examples:
           - 6
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
           
     ApiResponse:
       title: ApiResponse
@@ -200,7 +207,30 @@ components:
       type: apiKey
       name: api_key
       in: header
-security: []
+responses:
+  Unauthorized:
+    description: Unauthorized
+    schema:
+      type: string
+      example: Unauthorized
+  NotFound:
+    description: 'Not Found!'
+    schema:
+      type: string
+
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    required:
+      - code
+      - message
+security:
+  - api_key: []
 tags:
 - name: Branch
   description: Everything about our branches
