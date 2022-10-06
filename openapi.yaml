@@ -91,7 +91,6 @@ paths:
         in: path
         description: Barcode / SKU of product to return
         required: true
-        style: simple
         schema:
           type: string
       responses:
