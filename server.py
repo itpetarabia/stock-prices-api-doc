@@ -49,14 +49,20 @@ def getproducts():
     
   return jsonify(products), 200
 
-@app.route('/product', methods=['GET'])
+@app.route('/product', methods=['POST'])
 @require_auth
 def getproduct():
-  barcodes = request.json
+  data = request.json
+  if not isinstance(data, dict):
+    return '', 400
+  barcodes = data.get('barcodes')
+  if not barcodes:
+    return '',400
   if not isinstance(barcodes, Sequence):
-    return 'Invalid Type Error', 400
+    return '', 400
   if not all((isinstance(item, str) for item in barcodes)):
-    return 'Invalid Type Error', 400
+    return '', 400
+  barcodes = set(barcodes) # to remove duplicate entries
 
   products =[
     {
@@ -81,7 +87,10 @@ def getproduct():
   matched_products = []
   for prod in products:
     if prod['barcode'] in barcodes:
-      matched_products.append(prod['barcode'])
+      matched_products.append(prod)
+
+  if not matched_products:
+    return 'Not Found!', 404
   return jsonify(matched_products), 200
 
     

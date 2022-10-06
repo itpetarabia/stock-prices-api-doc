@@ -53,7 +53,7 @@ paths:
       security:
       - api_key: []
     parameters: []
-  /product:
+  /allproducts:
     get:
       tags:
       - Product
@@ -79,39 +79,56 @@ paths:
       security:
       - api_key: []
     parameters: []
-  /product/{barcode}:
-    get:
+  /product:
+    post:
       tags:
       - Product
-      summary: Get Product By Barcode
-      description: Returns a Single Product with all its details
+      summary: Get List of Products By Barcodes
+      description: Returns Products with all its details
       operationId: getProductByBarcode
-      parameters:
-      - name: barcode
-        in: path
-        description: Barcode / SKU of product to return
+      requestBody:
+        description: List of Barcodes
         required: true
-        schema:
-          type: string
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Barcodes'
       responses:
         '200':
-          description: Successful Operation
+          description: successful operation
           headers: {}
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+                description: ''
+                contentMediaType: application/json
+        '400':
+          $ref: '#/components/responses/TypeError'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-
       deprecated: false
       security:
       - api_key: []
     parameters: []
 components:
   schemas:
+    Barcodes:
+      title: Barcodes
+      type: object
+      properties:
+        barcodes:
+          type: array
+          items:
+            type: string
+            title: barcodes
+            examples:
+            - "99009910"
+          description: ''
     Product:
       title: Product
       type: object
@@ -211,6 +228,8 @@ components:
       description: Unauthorized
     NotFound:
       description: 'Not Found!'
+    TypeError:
+      description: 'Invalid Type Error'
 
 definitions:
   Error:
