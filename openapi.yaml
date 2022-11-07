@@ -8,7 +8,7 @@ info:
   version: '1.0'
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 servers:
-- url: http://127.0.0.1:5000
+- url: http://127.0.0.1:8069/v1/stock
   variables: {}
 
 webhooks:
@@ -28,13 +28,13 @@ webhooks:
           description: Return a 200 status to indicate that the data was received successfully
 
 paths:
-  /branch:
+  /location:
     get:
       tags:
-      - Branch
-      summary: Get List of Branches
-      description: Return a list of Branches
-      operationId: getBranches
+      - Location
+      summary: Get List of Locations
+      description: Return a list of Locations
+      operationId: getLocations
       parameters: []
       responses:
         '200':
@@ -42,9 +42,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Branch'
+                type: object
+                properties:
+                  object:
+                    type: string
+                    examples:
+                      - 'locations'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Location'
                 description: ''
                 contentMediaType: application/json
         '401':
@@ -60,7 +67,15 @@ paths:
       summary: Get All Products
       description: Returns a list of Products
       operationId: getAllProducts
-      parameters: []
+      parameters:
+        - name: page
+          in: query
+          description: "To get list of products by page (each page only shows max 50 products)"
+          required: false
+          # style: form
+          schema:
+            type: integer
+            example: 1
       responses:
         '200':
           description: successful operation
@@ -68,9 +83,28 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Product'
+                type: object
+                properties:
+                  object:
+                    type: string
+                    examples:
+                    - "products"
+                  paging:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      num_of_pages:
+                        type: integer
+                        example: 2
+                      num_of_items:
+                        type: integer
+                        example: 50
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
                 description: ''
                 contentMediaType: application/json
         '401':
@@ -80,19 +114,28 @@ paths:
       - api_key: []
     parameters: []
   /product:
-    post:
+    get:
       tags:
       - Product
-      summary: Get List of Products By Barcodes
-      description: Returns Products with all its details
+      summary: Get Product By Barcode
+      # description: Returns Products with all its details
       operationId: getProductByBarcode
-      requestBody:
-        description: List of Barcodes
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Barcodes'
+      parameters:
+        - name: barcode
+          in: query
+          description: "Barcode/SKU of Product"
+          required: false
+          # style: form
+          schema:
+            type: string
+            example: "2300001000008"
+      # requestBody:
+      #   description: List of Barcodes
+      #   required: true
+      #   content:
+      #     application/json:
+      #       schema:
+      #         $ref: '#/components/schemas/Barcodes'
       responses:
         '200':
           description: successful operation
@@ -148,32 +191,26 @@ components:
         quantities:
           type: array
           items:
-            $ref: '#/components/schemas/BranchQty'
+            $ref: '#/components/schemas/LocationQty'
           description: ''
-    BranchQty:
-      title: BranchQty
+    LocationQty:
+      title: LocationQty
       type: object
       properties:
-        branch_id:
-          type: integer
-          contentEncoding: int32
+        location_id:
+          type: string
           examples:
-          - 19
+          - "Sanad"
         quantity:
           type: integer
           contentEncoding: int64
           examples:
           - 42
-    Branch:
-      title: Branch
+    Location:
+      title: Location
       type: object
       properties:
         id:
-          type: integer
-          contentEncoding: int32
-          examples:
-          - 19
-        name:
           type: string
           examples:
           - Sanad
@@ -231,21 +268,10 @@ components:
     TypeError:
       description: 'Invalid Type Error'
 
-definitions:
-  Error:
-    type: object
-    properties:
-      code:
-        type: string
-      message:
-        type: string
-    required:
-      - code
-      - message
 security:
   - api_key: []
 tags:
-- name: Branch
-  description: Everything about our branches
+- name: Location
+  description: Our Locations
 - name: Product
   description: Everything about our products and their stock count
