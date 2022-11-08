@@ -18,7 +18,10 @@ webhooks:
       tags:
         - Product
       requestBody:
-        description: Stock count update for a product in a particular branch
+        description: >-
+          Stock count update for a product in a particular branch.
+          The payload will be a JWT token. To decode it, use resources at https://jwt.io .
+          Furthermore, to verify the signature of the token, use the API key as the secret key while decoding it.
         content:
           application/json:
             schema:
@@ -40,7 +43,7 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
+            text/html:
               schema:
                 type: object
                 properties:
@@ -81,7 +84,7 @@ paths:
           description: successful operation
           headers: {}
           content:
-            application/json:
+            text/html:
               schema:
                 type: object
                 properties:
@@ -107,6 +110,8 @@ paths:
                       $ref: '#/components/schemas/Product'
                 description: ''
                 contentMediaType: application/json
+        '400':
+          $ref: '#/components/responses/TypeError'
         '401':
           $ref: '#/components/responses/Unauthorized'
       deprecated: false
@@ -129,19 +134,12 @@ paths:
           schema:
             type: string
             example: "2300001000008"
-      # requestBody:
-      #   description: List of Barcodes
-      #   required: true
-      #   content:
-      #     application/json:
-      #       schema:
-      #         $ref: '#/components/schemas/Barcodes'
       responses:
         '200':
           description: successful operation
           headers: {}
           content:
-            application/json:
+            text/html:
               schema:
                 type: array
                 items:
@@ -217,21 +215,31 @@ components:
     StockUpdate:
       title: StockUpdate
       type: object
+      description: The DECODED payload.
       properties:
-        branch_id:
-          type: integer
-          contentEncoding: int32
-          examples:
-          - 19
-        barcode:
+        object:
           type: string
-          examples:
-          - "009988"
-        qty:
-          type: integer
-          contentEncoding: int32
-          examples:
-          - 6
+          description: 'stock_update'
+          example: 'stock_update'
+        data:
+          type: object
+          properties:
+            barcode:
+              type: string
+              examples:
+              - "009988"
+            name:
+              type: string
+              example: 'Cat Food'
+            price:
+              type: number
+              example: 7.4
+            location_id:
+              type: string
+              example: "Sanad"
+            quantity:
+              type: integer
+              example: 6
     Error:
       type: object
       required:
